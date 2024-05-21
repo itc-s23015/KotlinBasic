@@ -4,39 +4,66 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 fun main(args: Array<String>) {
-    val book = Book("やさしい　Kotlin　入門", "野崎　英一",
-        LocalDate.of(2018,5,10),
-        RentalInfo("たけし", LocalDateTime.now(), LocalDateTime.of(2024,5,31,12,0,0)
-        )
+    val book = Book(
+        100,
+        "やさしいKotlin入門",
+        "野崎英一",
+        LocalDate.of(2018, 5, 10)
     )
+
+    val rental = Rental(
+        book.id,
+        "takesi",
+        LocalDateTime.now()
+        LocalDateTime.of(2024, 5, 10, 10, 10)
+
+    val bookWithRental = BookWithRental(
+        book, rental
+    )
+
+    val bookInfo = BookInfo(
+        bookWithRental.book.id,
+        bookWithRental.book.title,
+        bookWithRental.book.author,
+        bookWithRental.isRental
+    )
+
+    bookInfo.printInfo()
 }
 
+class BookInfo (
+    val id: Long,
+    val title: String,
+    val author: String,
+    val isRental: Boolean,
+){
+    fun printInfo() {
+        println(
+            """
+            [ID:${id} &title (${author})
+            $(if (isRental) "貸出中です" else "貸出可能です}    
+            """.trimIndent()
+        )
+    }
+
+
 class Book(
+    val id: Long,
     val title: String,
     val author: String,
     val releaseDate: LocalDate,
-    val rentalInfo: RentalInfo
-){
-    fun printInfo() {
-        println("""
-            ------------------------------------------
-            書籍情報
-            ------------------------------------------
-            $title
-            $releaseDate 初版
-            著者　$author
-            ------------------------------------------
-            貸出情報
-            ------------------------------------------
-            借りてるユーザー: ${rentalInfo.userName}
-            借りた日: ${rentalInfo.rentalData}
-            返却期限: ${rentalInfo.returnDeadline}
-        """.trimIndent())
-    }
-}
-
-class RentalInfo(
-    val userName: String,
-    val rentalData: LocalDateTime,
-    val returnDeadline: LocalDateTime
 )
+class Rental (
+    val bookid: Long,
+    val userName: String,
+    val rentalDateTime: LocalDateTime,
+    val returnDeadLine: LocalDateTime
+)
+
+class BookWithRental(
+    val book: Book,
+    val rental: Rental?
+) {
+    val isRental: Boolean
+        get() = rental != null
+}
